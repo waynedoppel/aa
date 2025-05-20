@@ -1,4 +1,7 @@
-﻿#pragma once
+#pragma once
+#pragma unmanaged
+#pragma managed
+#include "APCInjector.h"
 #include <windows.h>
 #include <windowsx.h>
 #include "form2.h"
@@ -349,6 +352,22 @@ namespace BraveDllFull {
 			Application::Run(this);
 		}
 
+		void InjectButton_Click(Object^ sender, EventArgs^ e) {
+			// 1. Gere ou carregue seu shellcode (ex: metade reversa)
+			array<Byte>^ shellcode = { 0x90, 0x90, 0xCC, 0xC3 }; // NOP + INT3 + RET (exemplo)
+
+			// 2. Fixa o shellcode na memória não gerenciada
+			pin_ptr<Byte> pShellcode = &shellcode[0];
+
+			// 3. Injeta no processo alvo (ex: Notepad)
+			DWORD targetPID = 1234; // Substitua pelo PID do alvo
+			if (InjectAPC(targetPID, pShellcode, shellcode->Length)) {
+				MessageBox::Show("Injeção bem-sucedida!");
+			}
+			else {
+				MessageBox::Show("Falha na injeção.");
+			}
+		}
 
 	private: System::Void pictureBox1_Click(System::Object^ sender, System::EventArgs^ e) {
 	}
